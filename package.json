@@ -1,0 +1,44 @@
+{
+  "name": "swift-pass",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "17.0.2",
+    "react-native": "0.66.3",
+    "react-navigation": "^4.4.4",
+    "xrpl": "^2.0.0",
+    "axios": "^0.24.0",
+    "react-native-dotenv": "^3.3.1",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/runtime": "^7.16.0",
+    "babel-jest": "^27.4.4",
+    "eslint": "^8.3.0",
+    "jest": "^27.4.4",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "react-test-renderer": "17.0.2",
+    "bootstrap": "4.1.3",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-bignumber": "^2.0.2",
+    "lite-server": "^2.3.0",
+    "nodemon": "^1.17.3",
+    "truffle": "5.0.2",
+    "truffle-contract": "^4.0.31",
+    "web3": "^4.3.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
