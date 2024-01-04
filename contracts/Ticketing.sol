@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.5.0;
 
 contract Ticketing {
     address public organizer;
@@ -8,7 +8,7 @@ contract Ticketing {
     uint public ticketsSold;
     mapping(address => uint) public ticketsBought;
 
-    constructor(uint _ticketPrice, uint _totalTickets) {
+    constructor(uint _ticketPrice, uint _totalTickets) public {
         organizer = msg.sender;
         ticketPrice = _ticketPrice;
         totalTickets = _totalTickets;
@@ -29,6 +29,6 @@ contract Ticketing {
 
         ticketsBought[msg.sender] = 0;
         ticketsSold -= tickets;
-        payable(msg.sender).transfer(tickets * ticketPrice);
+        msg.sender.transfer(tickets * ticketPrice);
     }
 }
