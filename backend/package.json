@@ -1,0 +1,20 @@
+{
+  "name": "swift-pass-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.11.19",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "mocha": "^8.2.1"
+  }
+}

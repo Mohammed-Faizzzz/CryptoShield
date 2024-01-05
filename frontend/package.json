@@ -1,0 +1,24 @@
+{
+  "name": "swift-pass-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "react": "17.0.2",
+    "react-native": "0.66.3",
+    "react-native-dotenv": "^3.3.1",
+    "react-navigation": "^4.4.4",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0"
+  }
+}
