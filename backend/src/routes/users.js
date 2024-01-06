@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
+const { exec } = require('child_process');
 
 // Signup route
 router.post('/signup', async (req, res) => {
