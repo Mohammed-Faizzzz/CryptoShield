@@ -1,3 +1,4 @@
+// this is actually not necessary and can be deleted
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
