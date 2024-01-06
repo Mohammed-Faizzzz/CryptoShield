@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   isOrganizer: { type: Boolean, default: false }
+  xrplWallet: { type: String, unique: true, required: true }
 });
 
 module.exports = mongoose.model('User', UserSchema);

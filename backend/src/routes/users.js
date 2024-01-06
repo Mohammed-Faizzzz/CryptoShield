@@ -15,22 +15,42 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ msg: 'User already exists' });
     }
 
-    user = new User({ name, email, password, isOrganizer });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    // Call Python script to generate XRPL wallet
+    exec('python3 /path/to/createWallet.py', async (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return res.status(500).send('Error generating wallet');
+      }
 
-    await user.save();
+      // Parse the wallet details
+      const wallet = JSON.parse(stdout);
 
-    const payload = { user: { id: user.id }};
-    jwt.sign(payload, 'your_jwt_secret', { expiresIn: 3600 }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
+      // Create new user with wallet details
+      user = new User({
+        name,
+        email,
+        password,
+        isOrganizer,
+        xrplWallet: wallet
+      });
+
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+
+      await user.save();
+
+      const payload = { user: { id: user.id }};
+      jwt.sign(payload, 'your_jwt_secret', { expiresIn: 3600 }, (err, token) => {
+        if (err) throw err;
+        res.json({ token, xrplWallet: user.xrplWallet });
+      });
     });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 });
+
 
 // Login route
 router.post('/login', async (req, res) => {
