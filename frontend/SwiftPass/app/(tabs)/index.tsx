@@ -12,6 +12,42 @@ export default function TabOneScreen() {
     </View>
   );
 }
+// // ConcertsScreen.tsx
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+
+// const ConcertsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+//   const [concerts, setConcerts] = useState([]);
+
+//   useEffect(() => {
+//     const fetchConcerts = async () => {
+//       try {
+//         const response = await axios.get('http://your-backend-url/api/concerts');
+//         setConcerts(response.data);
+//       } catch (error) {
+//         console.error('Error fetching concerts:', error);
+//       }
+//     };
+
+//     fetchConcerts();
+//   }, []);
+
+//   return (
+//     <View style={styles.container}>
+//       {concerts.map((concert) => (
+//         <TouchableOpacity
+//           key={concert._id}
+//           onPress={() => navigation.navigate('Tickets', { concert })}
+//         >
+//           <Text>{concert.artist} - {concert.venue}</Text>
+//         </TouchableOpacity>
+//       ))}
+//     </View>
+//   );
+// };
+
+// export default ConcertsScreen;
+
 
 const styles = StyleSheet.create({
   container: {

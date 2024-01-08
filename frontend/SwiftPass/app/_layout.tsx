@@ -1,9 +1,15 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import HomeStackNavigator from './Navigators/HomeStackNavigator';
+import TicketStackNavigator from './Navigators/TicketStackNavigator';
+import ProfileScreen from './Screens/ProfileScreen';
+import OrganiserStackNavigator from './Navigators/OrganiserStackNavigator';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -42,15 +48,63 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+const Tab = createBottomTabNavigator();
+// change this to true to see the Organiser tab
+// get the info from the backend
+const isOrganiser = false;
+
+function TabBarIcon(props: {
+  name: React.ComponentProps<typeof FontAwesome>['name'];
+  color: string;
+}) {
+  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+      <NavigationContainer independent={true}>
+        <Tab.Navigator initialRouteName='Home'>
+          <Tab.Screen
+            name="Home"
+            options={{
+              headerShown: false,
+              tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            }}
+            component={HomeStackNavigator}
+          />
+          <Tab.Screen
+            name="Tickets"
+            options={{
+              title: 'Tickets',
+              tabBarIcon: ({ color }) => <TabBarIcon name="ticket" color={color} />,
+            }}
+            component={TicketStackNavigator}
+          />
+          <Tab.Screen
+            name="Profile"
+            options={{
+              title: 'Profile',
+              tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+            }}
+            component={ProfileScreen}
+          />
+
+          {isOrganiser && (
+            <Tab.Screen
+              name="Organiser"
+              options={{
+                title: 'Organiser',
+                tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+              }}
+              component={OrganiserStackNavigator}
+            />
+          )}
+
+        </Tab.Navigator>
+      </NavigationContainer>
     </ThemeProvider>
   );
 }
