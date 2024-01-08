@@ -7,7 +7,8 @@ const UserSchema = new mongoose.Schema({
   isOrganizer: { type: Boolean, default: false },
   xrplWallet: {
       address: { type: String, unique: true, required: true }
-      }
+      },
+  ethereumAddress: { type: String, required: true }
 });
 
 module.exports = mongoose.model('User', UserSchema);
