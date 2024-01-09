@@ -36,8 +36,8 @@ contract Hosting {
             eventName: _eventName,
             numberOfTickets: _numberOfTickets,
             ticketPrice: _ticketPrice,
-            organiserXrplWallet: _organiserXrplWallet,
-            organiserEthWallet: _organiserEthWallet,
+            xrplWallet: _organiserXrplWallet,
+            ethereumAddress: _organiserEthWallet,
             isActive: true
         });
 
@@ -53,7 +53,7 @@ contract Hosting {
     function getEventDetails(uint256 _eventId) external view returns (string memory, uint256, uint256, address, address, bool) {
         require(_eventId < events.length, "Event does not exist");
         Event memory eventToGet = events[_eventId];
-        return (eventToGet.eventName, eventToGet.numberOfTickets, eventToGet.ticketPrice, eventToGet.organiserXrplWallet, eventToGet.organiserEthWallet, eventToGet.isActive);
+        return (eventToGet.eventName, eventToGet.numberOfTickets, eventToGet.ticketPrice, eventToGet.xrplWallet, eventToGet.ethereumAddress, eventToGet.isActive);
     }
 
     // Function to sell tickets for a specific event

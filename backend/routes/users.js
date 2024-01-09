@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Event = require('../models/Event');
 const router = express.Router();
 const { exec } = require('child_process');
 const { Web3 } = require('web3');
@@ -71,142 +72,355 @@ const accountManagerABI = [
                                 "type": "function"
                               }
                             ]; // The ABI for smart contract
-const accountManagerAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
+const accountManagerAddress = '0x06d1D781F8cD9863AfD4bfc001eBe3557317621B';
 const accountManagerContract = new web3.eth.Contract(accountManagerABI, accountManagerAddress);
 
 const hostingContractABI = [
-                              {
-                                "constant": true,
-                                "inputs": [
-                                  {
-                                    "internalType": "address",
-                                    "name": "",
-                                    "type": "address"
-                                  }
-                                ],
-                                "name": "users",
-                                "outputs": [
-                                  {
-                                    "internalType": "string",
-                                    "name": "xrplWalletAddress",
-                                    "type": "string"
-                                  },
-                                  {
-                                    "internalType": "bool",
-                                    "name": "isRegistered",
-                                    "type": "bool"
-                                  }
-                                ],
-                                "payable": false,
-                                "stateMutability": "view",
-                                "type": "function"
-                              },
-                              {
-                                "constant": false,
-                                "inputs": [
-                                  {
-                                    "internalType": "string",
-                                    "name": "xrplWalletAddress",
-                                    "type": "string"
-                                  }
-                                ],
-                                "name": "registerUser",
-                                "outputs": [],
-                                "payable": false,
-                                "stateMutability": "nonpayable",
-                                "type": "function"
-                              },
-                              {
-                                "constant": true,
-                                "inputs": [
-                                  {
-                                    "internalType": "address",
-                                    "name": "userAddress",
-                                    "type": "address"
-                                  }
-                                ],
-                                "name": "isUserRegistered",
-                                "outputs": [
-                                  {
-                                    "internalType": "bool",
-                                    "name": "",
-                                    "type": "bool"
-                                  }
-                                ],
-                                "payable": false,
-                                "stateMutability": "view",
-                                "type": "function"
-                              }
-                            ]; // The ABI for smart contract
-const hostingContractAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
+                               {
+                                 "inputs": [],
+                                 "payable": false,
+                                 "stateMutability": "nonpayable",
+                                 "type": "constructor"
+                               },
+                               {
+                                 "constant": true,
+                                 "inputs": [
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "",
+                                     "type": "uint256"
+                                   }
+                                 ],
+                                 "name": "events",
+                                 "outputs": [
+                                   {
+                                     "internalType": "string",
+                                     "name": "eventName",
+                                     "type": "string"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "numberOfTickets",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "ticketPrice",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "xrplWallet",
+                                     "type": "address"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "ethereumAddress",
+                                     "type": "address"
+                                   },
+                                   {
+                                     "internalType": "bool",
+                                     "name": "isActive",
+                                     "type": "bool"
+                                   }
+                                 ],
+                                 "payable": false,
+                                 "stateMutability": "view",
+                                 "type": "function"
+                               },
+                               {
+                                 "constant": true,
+                                 "inputs": [],
+                                 "name": "owner",
+                                 "outputs": [
+                                   {
+                                     "internalType": "address",
+                                     "name": "",
+                                     "type": "address"
+                                   }
+                                 ],
+                                 "payable": false,
+                                 "stateMutability": "view",
+                                 "type": "function"
+                               },
+                               {
+                                 "constant": false,
+                                 "inputs": [
+                                   {
+                                     "internalType": "string",
+                                     "name": "_eventName",
+                                     "type": "string"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "_numberOfTickets",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "_ticketPrice",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "_organiserXrplWallet",
+                                     "type": "address"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "_organiserEthWallet",
+                                     "type": "address"
+                                   }
+                                 ],
+                                 "name": "createEvent",
+                                 "outputs": [],
+                                 "payable": false,
+                                 "stateMutability": "nonpayable",
+                                 "type": "function"
+                               },
+                               {
+                                 "constant": true,
+                                 "inputs": [],
+                                 "name": "getEventCount",
+                                 "outputs": [
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "",
+                                     "type": "uint256"
+                                   }
+                                 ],
+                                 "payable": false,
+                                 "stateMutability": "view",
+                                 "type": "function"
+                               },
+                               {
+                                 "constant": true,
+                                 "inputs": [
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "_eventId",
+                                     "type": "uint256"
+                                   }
+                                 ],
+                                 "name": "getEventDetails",
+                                 "outputs": [
+                                   {
+                                     "internalType": "string",
+                                     "name": "",
+                                     "type": "string"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "",
+                                     "type": "address"
+                                   },
+                                   {
+                                     "internalType": "address",
+                                     "name": "",
+                                     "type": "address"
+                                   },
+                                   {
+                                     "internalType": "bool",
+                                     "name": "",
+                                     "type": "bool"
+                                   }
+                                 ],
+                                 "payable": false,
+                                 "stateMutability": "view",
+                                 "type": "function"
+                               },
+                               {
+                                 "constant": false,
+                                 "inputs": [
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "_eventId",
+                                     "type": "uint256"
+                                   },
+                                   {
+                                     "internalType": "uint256",
+                                     "name": "_numberOfTickets",
+                                     "type": "uint256"
+                                   }
+                                 ],
+                                 "name": "sellTickets",
+                                 "outputs": [],
+                                 "payable": true,
+                                 "stateMutability": "payable",
+                                 "type": "function"
+                               }
+                             ]; // The ABI for smart contract
+const hostingContractAddress = '0x5C07345E6A62F0936FE36aaf899e1591dA6F2416';
 const hostingContract = new web3.eth.Contract(hostingContractABI, hostingContractAddress);
 
 
 const ticketingContractABI = [
-                              {
-                                "constant": true,
-                                "inputs": [
-                                  {
-                                    "internalType": "address",
-                                    "name": "",
-                                    "type": "address"
-                                  }
-                                ],
-                                "name": "users",
-                                "outputs": [
-                                  {
-                                    "internalType": "string",
-                                    "name": "xrplWalletAddress",
-                                    "type": "string"
-                                  },
-                                  {
-                                    "internalType": "bool",
-                                    "name": "isRegistered",
-                                    "type": "bool"
-                                  }
-                                ],
-                                "payable": false,
-                                "stateMutability": "view",
-                                "type": "function"
-                              },
-                              {
-                                "constant": false,
-                                "inputs": [
-                                  {
-                                    "internalType": "string",
-                                    "name": "xrplWalletAddress",
-                                    "type": "string"
-                                  }
-                                ],
-                                "name": "registerUser",
-                                "outputs": [],
-                                "payable": false,
-                                "stateMutability": "nonpayable",
-                                "type": "function"
-                              },
-                              {
-                                "constant": true,
-                                "inputs": [
-                                  {
-                                    "internalType": "address",
-                                    "name": "userAddress",
-                                    "type": "address"
-                                  }
-                                ],
-                                "name": "isUserRegistered",
-                                "outputs": [
-                                  {
-                                    "internalType": "bool",
-                                    "name": "",
-                                    "type": "bool"
-                                  }
-                                ],
-                                "payable": false,
-                                "stateMutability": "view",
-                                "type": "function"
-                              }
-                            ]; // The ABI for smart contract
-const ticketingContractAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
+                                 {
+                                   "inputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "_price",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "nonpayable",
+                                   "type": "constructor"
+                                 },
+                                 {
+                                   "anonymous": false,
+                                   "inputs": [
+                                     {
+                                       "indexed": true,
+                                       "internalType": "address",
+                                       "name": "buyer",
+                                       "type": "address"
+                                     },
+                                     {
+                                       "indexed": false,
+                                       "internalType": "uint256",
+                                       "name": "seatNumber",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "indexed": false,
+                                       "internalType": "uint256",
+                                       "name": "quantity",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "name": "TicketPurchased",
+                                   "type": "event"
+                                 },
+                                 {
+                                   "constant": true,
+                                   "inputs": [],
+                                   "name": "maxQuantity",
+                                   "outputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "view",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": true,
+                                   "inputs": [],
+                                   "name": "owner",
+                                   "outputs": [
+                                     {
+                                       "internalType": "address",
+                                       "name": "",
+                                       "type": "address"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "view",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": true,
+                                   "inputs": [
+                                     {
+                                       "internalType": "address",
+                                       "name": "",
+                                       "type": "address"
+                                     }
+                                   ],
+                                   "name": "ownerSeatCount",
+                                   "outputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "view",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": true,
+                                   "inputs": [],
+                                   "name": "price",
+                                   "outputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "view",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": true,
+                                   "inputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "name": "seatToOwner",
+                                   "outputs": [
+                                     {
+                                       "internalType": "address",
+                                       "name": "",
+                                       "type": "address"
+                                     }
+                                   ],
+                                   "payable": false,
+                                   "stateMutability": "view",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": false,
+                                   "inputs": [
+                                     {
+                                       "internalType": "uint256[]",
+                                       "name": "seatNumbers",
+                                       "type": "uint256[]"
+                                     }
+                                   ],
+                                   "name": "purchaseTickets",
+                                   "outputs": [],
+                                   "payable": true,
+                                   "stateMutability": "payable",
+                                   "type": "function"
+                                 },
+                                 {
+                                   "constant": false,
+                                   "inputs": [
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "seatNumber",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "name": "refundTicket",
+                                   "outputs": [],
+                                   "payable": false,
+                                   "stateMutability": "nonpayable",
+                                   "type": "function"
+                                 }
+                               ]; // The ABI for smart contract
+const ticketingContractAddress = '0x1C9Ab354f71A5b93c88fF33ea9028d6183756854';
 const ticketingContract = new web3.eth.Contract(ticketingContractABI, ticketingContractAddress);
 
 
@@ -348,34 +562,36 @@ router.post('/host', async (req, res) => {
     ticketPrice,
   } = req.body;
 
-  const userId = req.user.email; // Assuming you have user authentication and userId available
+//  const userId = req.user.email;
+    const userId = "johndoe@example.com"; //hardcoded for testing
 
-  try {
+
     // Fetch the user's information from the database
-    await User.findOne({ email: userId });
+    const user = await User.findOne({ email: userId });
+
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     const {
-      organiserName,
-      organiserXrplWallet,
-      organiserEthWallet,
+      name,
+      xrplWallet,
+      ethereumAddress,
     } = user;
 
   try {
     // Create an Event document in your MongoDB
     const event = new Event({
       eventName,
-      organiserName,
+      name,
       location,
       date,
       time,
       numberOfTickets,
       ticketPrice,
-      organiserXrplWallet,
-      organiserEthWallet,
+      xrplWallet,
+      ethereumAddress,
     });
 
     // Save the Event document to the database
@@ -387,8 +603,8 @@ router.post('/host', async (req, res) => {
       eventName,
       numberOfTickets,
       ticketPrice,
-      organiserXrplWallet,
-      organiserEthWallet
+      xrplWallet,
+      ethereumAddress
     ).send({ from: accounts[0] });
 
     // Handle the success response
@@ -415,6 +631,9 @@ router.post('/purchase', async (req, res) => {
         // Generate XRPL wallet
         const purchase = await buyTixUsingXRPL();
         console.log("XRPL purchase successful");
+      } catch (error) {
+        console.error("Error making XRPL transaction:", error);
+        res.status(500).send("Error making XRPL transaction");
       }
       res.status(200).send("Ticket purchased successfully");
     } catch (error) {
