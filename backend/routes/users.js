@@ -75,7 +75,7 @@ const accountManagerAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
 
 const accountManagerContract = new web3.eth.Contract(accountManagerABI, accountManagerAddress);
 
-const testAccount = '0x554d6ecd586A4352623257CD9Fb1D76A29801ff2'; //hardcoded for testing, remove
+const testAccount = '0xfd762ccd6752480203eE4d0DA289E4eD0a545736'; //hardcoded for testing, remove
 
 // Helper function to execute the Python script and parse the output
 const generateXRPLWallet = async () => {
