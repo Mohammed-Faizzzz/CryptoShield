@@ -1,37 +1,75 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.5.0;
 
-contract Hosting {
-    address public organiser;
-    mapping(uint => address) public seatToOwner;
-    mapping(address => uint) public organiserSeatCount;
-    uint public price;
-    uint public maxQuantity = 5; // Maximum number of tickets a user can buy
+contract HostingContract {
+    address public owner; // Address of the contract owner
 
-    event TicketPurchased(address indexed buyer, uint seatNumber, uint quantity);
-
-    constructor(uint _price) public {
-        buyer = msg.sender;
-        price = _price;
+    struct Event {
+        string eventName;
+        uint256 numberOfTickets;
+        uint256 ticketPrice;
+        address organiserXrplWallet;
+        address organiserEthWallet;
+        bool isActive; // Indicates if the event is active or not
     }
 
-    function purchaseTickets(uint[] memory seatNumbers) public payable {
-        require(seatNumbers.length <= maxQuantity, "Exceeds maximum ticket limit");
-        uint totalCost = price * seatNumbers.length;
-        require(msg.value == totalCost, "Incorrect payment amount");
+    Event[] public events; // List of hosted events
 
-        for(uint i = 0; i < seatNumbers.length; i++) {
-            uint seatNumber = seatNumbers[i];
-            require(seatToOwner[seatNumber] == address(0), "Seat already taken"); // Checks if that specific seat is alloted to someone else
-            seatToOwner[seatNumber] = msg.sender; // Assigns the seat to buyer
-            emit TicketPurchased(msg.sender, seatNumber, seatNumbers.length);
+    constructor() {
+        owner = msg.sender; // Set the contract owner to the deployer's address
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the contract owner can perform this operation");
+        _;
+    }
+
+    // Function to host a new event
+    function createEvent(
+        string memory _eventName,
+        uint256 _numberOfTickets,
+        uint256 _ticketPrice,
+        address _organiserXrplWallet,
+        address _organiserEthWallet
+    ) external onlyOwner {
+        Event memory newEvent = Event({
+            eventName: _eventName,
+            numberOfTickets: _numberOfTickets,
+            ticketPrice: _ticketPrice,
+            organiserXrplWallet: _organiserXrplWallet,
+            organiserEthWallet: _organiserEthWallet,
+            isActive: true
+        });
+
+        events.push(newEvent);
+    }
+
+    // Function to get the total number of hosted events
+    function getEventCount() external view returns (uint256) {
+        return events.length;
+    }
+
+    // Function to get details of a specific event
+    function getEventDetails(uint256 _eventId) external view returns (Event memory) {
+        require(_eventId < events.length, "Event does not exist");
+        return events[_eventId];
+    }
+
+    // Function to sell tickets for a specific event
+    function sellTickets(uint256 _eventId, uint256 _numberOfTickets) external payable {
+        require(_eventId < events.length, "Event does not exist");
+        Event storage eventToSell = events[_eventId];
+        require(eventToSell.isActive, "Event is not active");
+        require(_numberOfTickets > 0, "Number of tickets must be greater than zero");
+        require(_numberOfTickets <= eventToSell.numberOfTickets, "Not enough tickets available");
+        require(msg.value == _numberOfTickets * eventToSell.ticketPrice, "Incorrect payment amount");
+
+        // Reduce the available tickets
+        eventToSell.numberOfTickets -= _numberOfTickets;
+
+        // Refund any excess payment
+        if (msg.value > _numberOfTickets * eventToSell.ticketPrice) {
+            payable(msg.sender).transfer(msg.value - _numberOfTickets * eventToSell.ticketPrice);
         }
-        ownerSeatCount[msg.sender] += seatNumbers.length;
-    }
-
-    function refundTicket(uint seatNumber) public {
-        require(seatToOwner[seatNumber] == msg.sender, "Not ticket owner");
-        seatToOwner[seatNumber] = address(0);
-        ownerSeatCount[msg.sender]--;
-        payable(msg.sender).transfer(price);
     }
 }

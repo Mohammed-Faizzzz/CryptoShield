@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 contract Ticketing {
-    address public buyer;
+    address public owner;
     mapping(uint => address) public seatToOwner;
     mapping(address => uint) public ownerSeatCount;
     uint public price;
@@ -9,8 +9,8 @@ contract Ticketing {
 
     event TicketPurchased(address indexed buyer, uint seatNumber, uint quantity);
 
-    constructor(uint _price) public {
-        buyer = msg.sender;
+    constructor(uint _price) {
+        owner = msg.sender;
         price = _price;
     }
 
@@ -21,8 +21,8 @@ contract Ticketing {
 
         for(uint i = 0; i < seatNumbers.length; i++) {
             uint seatNumber = seatNumbers[i];
-            require(seatToOwner[seatNumber] == address(0), "Seat already taken"); // Checks if that specific seat is alloted to someone else
-            seatToOwner[seatNumber] = msg.sender; // Assigns the seat to buyer
+            require(seatToOwner[seatNumber] == address(0), "Seat already taken"); // Checks if that specific seat is allotted to someone else
+            seatToOwner[seatNumber] = msg.sender; // Assigns the seat to the buyer
             emit TicketPurchased(msg.sender, seatNumber, seatNumbers.length);
         }
         ownerSeatCount[msg.sender] += seatNumbers.length;
