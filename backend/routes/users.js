@@ -6,7 +6,7 @@ const router = express.Router();
 const { exec } = require('child_process');
 const { Web3 } = require('web3');
 const web3 = new Web3('http://localhost:7545');
-const Signup = require('../smart_contracts/build/contracts/Signup.json');
+
 const accountManagerABI = [
                               {
                                 "constant": true,
@@ -72,8 +72,143 @@ const accountManagerABI = [
                               }
                             ]; // The ABI for smart contract
 const accountManagerAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
-
 const accountManagerContract = new web3.eth.Contract(accountManagerABI, accountManagerAddress);
+
+const hostingContractABI = [
+                              {
+                                "constant": true,
+                                "inputs": [
+                                  {
+                                    "internalType": "address",
+                                    "name": "",
+                                    "type": "address"
+                                  }
+                                ],
+                                "name": "users",
+                                "outputs": [
+                                  {
+                                    "internalType": "string",
+                                    "name": "xrplWalletAddress",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "internalType": "bool",
+                                    "name": "isRegistered",
+                                    "type": "bool"
+                                  }
+                                ],
+                                "payable": false,
+                                "stateMutability": "view",
+                                "type": "function"
+                              },
+                              {
+                                "constant": false,
+                                "inputs": [
+                                  {
+                                    "internalType": "string",
+                                    "name": "xrplWalletAddress",
+                                    "type": "string"
+                                  }
+                                ],
+                                "name": "registerUser",
+                                "outputs": [],
+                                "payable": false,
+                                "stateMutability": "nonpayable",
+                                "type": "function"
+                              },
+                              {
+                                "constant": true,
+                                "inputs": [
+                                  {
+                                    "internalType": "address",
+                                    "name": "userAddress",
+                                    "type": "address"
+                                  }
+                                ],
+                                "name": "isUserRegistered",
+                                "outputs": [
+                                  {
+                                    "internalType": "bool",
+                                    "name": "",
+                                    "type": "bool"
+                                  }
+                                ],
+                                "payable": false,
+                                "stateMutability": "view",
+                                "type": "function"
+                              }
+                            ]; // The ABI for smart contract
+const hostingContractAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
+const hostingContract = new web3.eth.Contract(hostingContractABI, hostingContractAddress);
+
+
+const ticketingContractABI = [
+                              {
+                                "constant": true,
+                                "inputs": [
+                                  {
+                                    "internalType": "address",
+                                    "name": "",
+                                    "type": "address"
+                                  }
+                                ],
+                                "name": "users",
+                                "outputs": [
+                                  {
+                                    "internalType": "string",
+                                    "name": "xrplWalletAddress",
+                                    "type": "string"
+                                  },
+                                  {
+                                    "internalType": "bool",
+                                    "name": "isRegistered",
+                                    "type": "bool"
+                                  }
+                                ],
+                                "payable": false,
+                                "stateMutability": "view",
+                                "type": "function"
+                              },
+                              {
+                                "constant": false,
+                                "inputs": [
+                                  {
+                                    "internalType": "string",
+                                    "name": "xrplWalletAddress",
+                                    "type": "string"
+                                  }
+                                ],
+                                "name": "registerUser",
+                                "outputs": [],
+                                "payable": false,
+                                "stateMutability": "nonpayable",
+                                "type": "function"
+                              },
+                              {
+                                "constant": true,
+                                "inputs": [
+                                  {
+                                    "internalType": "address",
+                                    "name": "userAddress",
+                                    "type": "address"
+                                  }
+                                ],
+                                "name": "isUserRegistered",
+                                "outputs": [
+                                  {
+                                    "internalType": "bool",
+                                    "name": "",
+                                    "type": "bool"
+                                  }
+                                ],
+                                "payable": false,
+                                "stateMutability": "view",
+                                "type": "function"
+                              }
+                            ]; // The ABI for smart contract
+const ticketingContractAddress = '0x49372BC3bce59Af66Fa0066a325dbe9EaA68d877';
+const ticketingContract = new web3.eth.Contract(ticketingContractABI, ticketingContractAddress);
+
 
 const testAccount = '0xfd762ccd6752480203eE4d0DA289E4eD0a545736'; //hardcoded for testing, remove
 
@@ -81,6 +216,19 @@ const testAccount = '0xfd762ccd6752480203eE4d0DA289E4eD0a545736'; //hardcoded fo
 const generateXRPLWallet = async () => {
   return new Promise((resolve, reject) => {
     exec('python3 createWallet.py', (error, stdout, stderr) => {
+      if (error) {
+        reject(`exec error: ${error}`);
+      } else {
+        resolve(JSON.parse(stdout));
+      }
+    });
+  });
+};
+
+// Helper function to execute the Python script and parse the output
+const buyTixUsingXRPL = async () => {
+  return new Promise((resolve, reject) => {
+    exec('python3 buyTicket.py', (error, stdout, stderr) => {
       if (error) {
         reject(`exec error: ${error}`);
       } else {
@@ -163,8 +311,6 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-
-
 // Login route
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -189,6 +335,84 @@ router.post('/login', async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
+});
+
+// Host Event route
+router.post('/host', async (req, res) => {
+  const {
+    eventName,
+    organiserName,
+    location,
+    date,
+    time,
+    numberOfTickets,
+    ticketPrice,
+    organiserXrplWallet,
+    organiserEthWallet,
+  } = req.body;
+
+  try {
+    // Create an Event document in your MongoDB
+    const event = new Event({
+      eventName,
+      organiserName,
+      location,
+      date,
+      time,
+      numberOfTickets,
+      ticketPrice,
+      organiserXrplWallet,
+      organiserEthWallet,
+    });
+
+    // Save the Event document to the database
+    await event.save();
+
+    // Lock ticket details in the Ethereum smart contract
+    const accounts = await web3.eth.getAccounts();
+    const result = await hostingContract.methods.createTickets(
+      eventName,
+      numberOfTickets,
+      ticketPrice,
+      organiserXrplWallet,
+      organiserEthWallet
+    ).send({ from: accounts[0] });
+
+    // Handle the success response
+    res.json({
+      success: true,
+      message: 'Event hosted successfully',
+      transactionHash: result.transactionHash,
+    });
+  } catch (error) {
+    console.error('Error hosting event:', error);
+    res.status(500).json({ success: false, message: 'Failed to host the event' });
+  }
+});
+
+// Purchase Ticket route
+router.post('/purchase', async (req, res) => {
+  const { seatNumber, userEthereumAddress } = req.body;
+  const ticketingContract = new web3.eth.Contract(ticketingContractABI, ticketingContractAddress);
+
+    try {
+      // Call the purchaseTicket function of the Ticketing contract
+      await ticketingContract.methods.purchaseTicket(seatNumber).send({ from: userEthereumAddress });
+      try {
+        // Generate XRPL wallet
+        const purchase = await buyTixUsingXRPL();
+        console.log("XRPL purchase successful");
+      }
+      res.status(200).send("Ticket purchased successfully");
+    } catch (error) {
+      console.error("Error purchasing ticket:", error);
+      res.status(500).send("Error purchasing ticket");
+    }
+});
+
+//Verify Ticket route
+router.post('/verify', async (req, res) => {
+    const { seatNumber, ethereumAddress } = req.body;
 });
 
 module.exports = router;

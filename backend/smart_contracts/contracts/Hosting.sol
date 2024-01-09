@@ -1,9 +1,9 @@
 pragma solidity ^0.5.0;
 
-contract Ticketing {
-    address public buyer;
+contract Hosting {
+    address public organiser;
     mapping(uint => address) public seatToOwner;
-    mapping(address => uint) public ownerSeatCount;
+    mapping(address => uint) public organiserSeatCount;
     uint public price;
     uint public maxQuantity = 5; // Maximum number of tickets a user can buy
 
