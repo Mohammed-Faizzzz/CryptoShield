@@ -1,4 +1,5 @@
-import { Schema, model, models } from 'mongoose';
+const mongoose = require('mongoose');
+const { Schema, model, models } = mongoose;
 
 const ticketSchema = new Schema({
   concert: {

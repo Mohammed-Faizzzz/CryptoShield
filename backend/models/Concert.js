@@ -1,5 +1,5 @@
-import { Schema, model, models } from 'mongoose';
-
+const mongoose = require('mongoose');
+const { Schema, model, models } = mongoose;
 const concertSchema = new Schema({
   organiser: { 
       type: Schema.Types.ObjectId,
@@ -14,6 +14,8 @@ const concertSchema = new Schema({
       ref: 'Ticket',
     },
   ],
+  name: { type: String, required: true },
+  description: { type: String, required: true },
 });
 
 const Concert = models.Concert || model('Concert', concertSchema);

@@ -16,3 +16,23 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+router.post('/', async (req, res) => {
+  const { name, description, date, venue, organiser } = req.body;
+  try {
+    const concert = new Concert({
+      name,
+      description,
+      date,
+      venue,
+      organiser
+    });
+    await concert.save();
+    res.send(concert);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+module.exports = router;

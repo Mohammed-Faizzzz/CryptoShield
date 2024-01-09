@@ -5,6 +5,7 @@ const ProfileScreen: React.FC = () =>{
   return (
     <View>
       <Text>ProfileScreen</Text>
+      <Text>To show the profile of user</Text>
     </View>
   )
 }

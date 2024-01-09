@@ -4,4 +4,5 @@ export interface Concert {
   venue: string;
   date: Date;
   tickets: string[]; // Replace with the actual Ticket type
+  name: string;
 }

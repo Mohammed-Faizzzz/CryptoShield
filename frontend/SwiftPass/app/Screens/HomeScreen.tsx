@@ -5,6 +5,7 @@ import { Concert } from '../types';
 import axios from 'axios';
 
 import ConcertCard from '../../components/ConcertCard'; // Import the ConcertCard component
+import baseURL from './../../assets/common/baseUrl';
 
 const HomeScreen: React.FC = () => {
   const [concerts, setConcerts] = useState<Concert[]>([]);
@@ -12,7 +13,7 @@ const HomeScreen: React.FC = () => {
   useEffect(() => {
     const fetchConcerts = async () => {
       try {
-        const response = await axios.get<Concert[]>('your-api-endpoint/concerts');
+        const response = await axios.get<Concert[]>(`${baseURL}concerts`);
         setConcerts(response.data);
       } catch (error) {
         console.error('Error fetching concerts:', error);

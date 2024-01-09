@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Screens/HomeScreen';
-import TicketScreen from '../Screens/TicketScreen';
+import PurchaseScreen from '../Screens/PurchaseScreen';
 
 const HomeStack = createStackNavigator();
 
@@ -14,9 +14,9 @@ export const HomeStackScreen = () => {
         options={{ title: 'Concerts' }} // If you don't want a header
       />
       <HomeStack.Screen
-        name="Tickets"
-        component={TicketScreen} // Replace with the actual component for the tickets screen
-        options={{ title: 'Tickets' }}
+        name="Purchase"
+        component={PurchaseScreen} // Replace with the actual component for the tickets screen
+        options={{ title: 'Purchase Tickets' }}
       />
     </HomeStack.Navigator>
   );

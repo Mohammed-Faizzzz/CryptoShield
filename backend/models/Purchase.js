@@ -1,5 +1,5 @@
-import { Schema, model, models } from 'mongoose';
-
+const mongoose = require('mongoose');
+const { Schema, model, models } = mongoose;
 const bookingSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
