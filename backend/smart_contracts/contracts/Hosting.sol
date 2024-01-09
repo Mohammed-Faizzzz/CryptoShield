@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.5.0;
 
-contract HostingContract {
+contract Hosting {
     address public owner; // Address of the contract owner
 
     struct Event {
         string eventName;
         uint256 numberOfTickets;
         uint256 ticketPrice;
-        address organiserXrplWallet;
-        address organiserEthWallet;
+        address xrplWallet;
+        address ethereumAddress;
         bool isActive; // Indicates if the event is active or not
     }
 
     Event[] public events; // List of hosted events
 
-    constructor() {
+    constructor() public {
         owner = msg.sender; // Set the contract owner to the deployer's address
     }
 
@@ -26,7 +26,7 @@ contract HostingContract {
 
     // Function to host a new event
     function createEvent(
-        string memory _eventName,
+        string calldata _eventName,
         uint256 _numberOfTickets,
         uint256 _ticketPrice,
         address _organiserXrplWallet,
@@ -50,9 +50,10 @@ contract HostingContract {
     }
 
     // Function to get details of a specific event
-    function getEventDetails(uint256 _eventId) external view returns (Event memory) {
+    function getEventDetails(uint256 _eventId) external view returns (string memory, uint256, uint256, address, address, bool) {
         require(_eventId < events.length, "Event does not exist");
-        return events[_eventId];
+        Event memory eventToGet = events[_eventId];
+        return (eventToGet.eventName, eventToGet.numberOfTickets, eventToGet.ticketPrice, eventToGet.organiserXrplWallet, eventToGet.organiserEthWallet, eventToGet.isActive);
     }
 
     // Function to sell tickets for a specific event
@@ -69,7 +70,7 @@ contract HostingContract {
 
         // Refund any excess payment
         if (msg.value > _numberOfTickets * eventToSell.ticketPrice) {
-            payable(msg.sender).transfer(msg.value - _numberOfTickets * eventToSell.ticketPrice);
+            address(msg.sender).transfer(msg.value - _numberOfTickets * eventToSell.ticketPrice);
         }
     }
 }

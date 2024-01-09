@@ -9,7 +9,7 @@ contract Ticketing {
 
     event TicketPurchased(address indexed buyer, uint seatNumber, uint quantity);
 
-    constructor(uint _price) {
+    constructor(uint _price) public {
         owner = msg.sender;
         price = _price;
     }
@@ -32,6 +32,6 @@ contract Ticketing {
         require(seatToOwner[seatNumber] == msg.sender, "Not ticket owner");
         seatToOwner[seatNumber] = address(0);
         ownerSeatCount[msg.sender]--;
-        payable(msg.sender).transfer(price);
+        address(msg.sender).transfer(price);
     }
 }

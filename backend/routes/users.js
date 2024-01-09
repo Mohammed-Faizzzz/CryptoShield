@@ -341,15 +341,28 @@ router.post('/login', async (req, res) => {
 router.post('/host', async (req, res) => {
   const {
     eventName,
-    organiserName,
     location,
     date,
     time,
     numberOfTickets,
     ticketPrice,
-    organiserXrplWallet,
-    organiserEthWallet,
   } = req.body;
+
+  const userId = req.user.email; // Assuming you have user authentication and userId available
+
+  try {
+    // Fetch the user's information from the database
+    await User.findOne({ email: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const {
+      organiserName,
+      organiserXrplWallet,
+      organiserEthWallet,
+    } = user;
 
   try {
     // Create an Event document in your MongoDB
