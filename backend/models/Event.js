@@ -5,7 +5,7 @@ const EventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  organiserName: {
+  name: {
     type: String,
     required: true,
   },
@@ -21,7 +21,7 @@ const EventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  organiserXrplWallet: {
+  xrplWallet: {
     address: {
       type: String,
       required: true,

@@ -266,16 +266,41 @@ const hostingContract = new web3.eth.Contract(hostingContractABI, hostingContrac
 
 const ticketingContractABI = [
                                  {
-                                   "inputs": [
-                                     {
-                                       "internalType": "uint256",
-                                       "name": "_price",
-                                       "type": "uint256"
-                                     }
-                                   ],
+                                   "inputs": [],
                                    "payable": false,
                                    "stateMutability": "nonpayable",
                                    "type": "constructor"
+                                 },
+                                 {
+                                   "anonymous": false,
+                                   "inputs": [
+                                     {
+                                       "indexed": true,
+                                       "internalType": "address",
+                                       "name": "organiser",
+                                       "type": "address"
+                                     },
+                                     {
+                                       "indexed": false,
+                                       "internalType": "uint256",
+                                       "name": "ticketPrice",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "indexed": false,
+                                       "internalType": "uint256",
+                                       "name": "maxQuantity",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "indexed": false,
+                                       "internalType": "uint256",
+                                       "name": "availableTickets",
+                                       "type": "uint256"
+                                     }
+                                   ],
+                                   "name": "EventHosted",
+                                   "type": "event"
                                  },
                                  {
                                    "anonymous": false,
@@ -289,12 +314,6 @@ const ticketingContractABI = [
                                      {
                                        "indexed": false,
                                        "internalType": "uint256",
-                                       "name": "seatNumber",
-                                       "type": "uint256"
-                                     },
-                                     {
-                                       "indexed": false,
-                                       "internalType": "uint256",
                                        "name": "quantity",
                                        "type": "uint256"
                                      }
@@ -304,12 +323,33 @@ const ticketingContractABI = [
                                  },
                                  {
                                    "constant": true,
-                                   "inputs": [],
-                                   "name": "maxQuantity",
+                                   "inputs": [
+                                     {
+                                       "internalType": "address",
+                                       "name": "",
+                                       "type": "address"
+                                     }
+                                   ],
+                                   "name": "events",
                                    "outputs": [
                                      {
+                                       "internalType": "address",
+                                       "name": "organiser",
+                                       "type": "address"
+                                     },
+                                     {
                                        "internalType": "uint256",
-                                       "name": "",
+                                       "name": "ticketPrice",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "maxQuantity",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "availableTickets",
                                        "type": "uint256"
                                      }
                                    ],
@@ -333,69 +373,37 @@ const ticketingContractABI = [
                                    "type": "function"
                                  },
                                  {
-                                   "constant": true,
-                                   "inputs": [
-                                     {
-                                       "internalType": "address",
-                                       "name": "",
-                                       "type": "address"
-                                     }
-                                   ],
-                                   "name": "ownerSeatCount",
-                                   "outputs": [
-                                     {
-                                       "internalType": "uint256",
-                                       "name": "",
-                                       "type": "uint256"
-                                     }
-                                   ],
-                                   "payable": false,
-                                   "stateMutability": "view",
-                                   "type": "function"
-                                 },
-                                 {
-                                   "constant": true,
-                                   "inputs": [],
-                                   "name": "price",
-                                   "outputs": [
-                                     {
-                                       "internalType": "uint256",
-                                       "name": "",
-                                       "type": "uint256"
-                                     }
-                                   ],
-                                   "payable": false,
-                                   "stateMutability": "view",
-                                   "type": "function"
-                                 },
-                                 {
-                                   "constant": true,
+                                   "constant": false,
                                    "inputs": [
                                      {
                                        "internalType": "uint256",
-                                       "name": "",
+                                       "name": "_ticketPrice",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "_maxQuantity",
+                                       "type": "uint256"
+                                     },
+                                     {
+                                       "internalType": "uint256",
+                                       "name": "_availableTickets",
                                        "type": "uint256"
                                      }
                                    ],
-                                   "name": "seatToOwner",
-                                   "outputs": [
-                                     {
-                                       "internalType": "address",
-                                       "name": "",
-                                       "type": "address"
-                                     }
-                                   ],
+                                   "name": "hostEvent",
+                                   "outputs": [],
                                    "payable": false,
-                                   "stateMutability": "view",
+                                   "stateMutability": "nonpayable",
                                    "type": "function"
                                  },
                                  {
                                    "constant": false,
                                    "inputs": [
                                      {
-                                       "internalType": "uint256[]",
-                                       "name": "seatNumbers",
-                                       "type": "uint256[]"
+                                       "internalType": "uint256",
+                                       "name": "_quantity",
+                                       "type": "uint256"
                                      }
                                    ],
                                    "name": "purchaseTickets",
@@ -409,18 +417,18 @@ const ticketingContractABI = [
                                    "inputs": [
                                      {
                                        "internalType": "uint256",
-                                       "name": "seatNumber",
+                                       "name": "_quantity",
                                        "type": "uint256"
                                      }
                                    ],
-                                   "name": "refundTicket",
+                                   "name": "refundTickets",
                                    "outputs": [],
                                    "payable": false,
                                    "stateMutability": "nonpayable",
                                    "type": "function"
                                  }
                                ]; // The ABI for smart contract
-const ticketingContractAddress = '0x1C9Ab354f71A5b93c88fF33ea9028d6183756854';
+const ticketingContractAddress = '0x900b4E21dDE7bB99234167394E316C5dcDC2d085';
 const ticketingContract = new web3.eth.Contract(ticketingContractABI, ticketingContractAddress);
 
 
@@ -562,13 +570,11 @@ router.post('/host', async (req, res) => {
     ticketPrice,
   } = req.body;
 
-//  const userId = req.user.email;
-    const userId = "johndoe@example.com"; //hardcoded for testing
+  const userId = "johndoe@example.com"; // hardcoded for testing
 
-
+  try {
     // Fetch the user's information from the database
     const user = await User.findOne({ email: userId });
-
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -580,7 +586,6 @@ router.post('/host', async (req, res) => {
       ethereumAddress,
     } = user;
 
-  try {
     // Create an Event document in your MongoDB
     const event = new Event({
       eventName,
@@ -597,15 +602,16 @@ router.post('/host', async (req, res) => {
     // Save the Event document to the database
     await event.save();
 
+  } catch (dbError) {
+    console.error('Error saving event to database:', dbError);
+    return res.status(500).json({ success: false, message: 'Failed to save event to database' });
+  }
+
+  try {
     // Lock ticket details in the Ethereum smart contract
     const accounts = await web3.eth.getAccounts();
-    const result = await hostingContract.methods.createTickets(
-      eventName,
-      numberOfTickets,
-      ticketPrice,
-      xrplWallet,
-      ethereumAddress
-    ).send({ from: accounts[0] });
+    const result = await ticketingContract.methods.hostEvent(ticketPrice, 5, numberOfTickets)
+        .send({ from: accounts[0], gas: 5000000 });
 
     // Handle the success response
     res.json({
@@ -613,11 +619,12 @@ router.post('/host', async (req, res) => {
       message: 'Event hosted successfully',
       transactionHash: result.transactionHash,
     });
-  } catch (error) {
-    console.error('Error hosting event:', error);
-    res.status(500).json({ success: false, message: 'Failed to host the event' });
+  } catch (scError) {
+    console.error('Error hosting event in smart contract:', scError);
+    res.status(500).json({ success: false, message: 'Failed to host the event in smart contract' });
   }
 });
+
 
 // Purchase Ticket route
 router.post('/purchase', async (req, res) => {
