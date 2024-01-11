@@ -17,5 +17,8 @@
     "truffle": "5.0.2",
     "truffle-contract": "^4.0.31",
     "web3": "^4.3.0"
+  },
+  "dependencies": {
+    "solc": "^0.8.23-fixed"
   }
 }
